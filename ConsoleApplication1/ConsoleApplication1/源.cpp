@@ -37,6 +37,7 @@ public:
 class Class {
 private:
 	vector<Student>st;
+	int fileEnd = 0;
 public:
 	vector<Student>all() { return st; }
 	void insertStudent(Student s) {
@@ -54,12 +55,12 @@ public:
 			cerr << "学号已存在!" << endl;
 			system("pause");
 		}
-		saveFileData();//更改数据后保存
 	}
 	void getFileData() {
 		ifstream f("data.txt", ios::in);
 		if (!f) {
 			cerr << "无此文件" << endl;
+			system("pause");
 			ofstream ff("data.txt", ios::trunc);//文件不存在则创建
 			return;
 		}
@@ -74,10 +75,11 @@ public:
 			}
 			insertStudent(Student(s1, s2, m));
 		}
+		fileEnd = st.size();
 	}
 	void saveFileData() {
-		ofstream f("data.txt", ios::trunc);
-		for (int i = 0; i<st.size(); i++) {
+		ofstream f("data.txt", ios::app);
+		for (int i = fileEnd; i < st.size(); i++) {
 			f << st[i].getId() << ' ' << st[i].getName() << ' ';
 			map<string, double>m = st[i].getScore();
 			for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
@@ -103,7 +105,6 @@ public:
 		vector<int>t = findStudentKey(s);
 		for (int i = t.size() - 1; i >= 0; i--)
 			st.erase(st.begin() + t[i]);
-		saveFileData();
 	}
 	double scoreAvr(string s) {//科目s平均分计算
 		double r = 0; int n = 0;
@@ -282,6 +283,7 @@ int main() {
 				m[s] = d;
 			}
 			s112.insertStudent(Student(s1, s2, m));
+			s112.saveFileData();//更改数据后保存
 		}
 		if (c == 'd' || c == 'D') {
 			cout << "请输入学生学号或姓名:";
@@ -290,6 +292,7 @@ int main() {
 			cout << "确定要删除他们吗?(Y/N)" << endl;
 			cin >> c; cin.ignore(1000, '\n');
 			if (c == 'Y' || c == 'y')s112.deleteStudent(s);
+			s112.saveFileData();//更改数据后保存
 		}
 		if (c == 'l' || c == 'L')showStudentList(s112.all(), "全部学生");
 		if (c == 's' || c == 'S') {
