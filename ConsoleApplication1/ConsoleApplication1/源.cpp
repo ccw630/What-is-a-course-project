@@ -6,6 +6,7 @@
 #include<vector>
 #include<set>
 #include<iomanip>
+#include<sstream>
 #include<conio.h>
 using namespace std;
 class Student {
@@ -19,12 +20,12 @@ public:
 	string getName() { return name; }
 	map<string, double>getScore() { return score; }
 	double getScore(string s) { return score[s]; }
-	int passSubject(string s) {	//-1 未选 0 挂 1 过
+	int passSubject(string s) {	//passSubject -1:未选 0:挂 1:过
 		if (!score.count(s))return -1;
 		if (score[s] >= 60)return 1;
 		return 0;
 	}
-	double gpa() {
+	double gpa() {//绩点计算
 		if (!score.size())return 0;
 		double r = 0;
 		for (map<string, double>::iterator i = score.begin(); i != score.end(); i++)
@@ -53,13 +54,13 @@ public:
 			cerr << "学号已存在!" << endl;
 			system("pause");
 		}
-		saveFileData();
+		saveFileData();//更改数据后保存
 	}
 	void getFileData() {
 		ifstream f("data.txt", ios::in);
 		if (!f) {
 			cerr << "无此文件" << endl;
-			ofstream ff("data.txt", ios::trunc);
+			ofstream ff("data.txt", ios::trunc);//文件不存在则创建
 			return;
 		}
 		string s1, s2;
@@ -81,7 +82,7 @@ public:
 			map<string, double>m = st[i].getScore();
 			for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 				f << j->first << ' ' << j->second << ' ';
-			f << "end -1" << endl;
+			f << "end -1" << endl;//以end -1作为一行结束的标志
 		}
 	}
 	vector<int> findStudentKey(string s) {
@@ -104,7 +105,7 @@ public:
 			st.erase(st.begin() + t[i]);
 		saveFileData();
 	}
-	double scoreAvr(string s) {
+	double scoreAvr(string s) {//科目s平均分计算
 		double r = 0; int n = 0;
 		for (int i = 0; i < st.size(); i++) {
 			r += st[i].getScore(s);
@@ -112,7 +113,7 @@ public:
 		}
 		return r / n;
 	}
-	double passRate(string s) {
+	double passRate(string s) {//科目s及格率计算
 		int n = 0, a = 0;
 		for (int i = 0; i<st.size(); i++) {
 			if (st[i].passSubject(s) >= 0)a++;
@@ -121,7 +122,7 @@ public:
 		return (double)n / a;
 	}
 
-	int getRank(Student t) {
+	int getRank(Student t) {//排名计算
 		int n = 1;
 		for (int i = 0; i<st.size(); i++)
 			if (st[i].gpa()>t.gpa())n++;
@@ -131,7 +132,13 @@ public:
 		saveFileData();
 	}
 };
-void listDisplay(vector<vector<string> >table, int col, string info = "", string title = "") {//col可选2 3 6
+string toString(double n) {//实数转为字符串 保留3位小数
+	ostringstream s;
+	s.setf(ios::fixed);
+	s << fixed << setprecision(3) << n;
+	return s.str();
+}
+void listDisplay(vector<vector<string> >table, int col, string info = "", string title = "") {//实现列表翻查功能 table:原始表格 col:列,可选2 3 6 info:窗口底部提示信息 title:右上角标题
 	int x = 0, y = 0, xm = table.size() - 9, ym = table[0].size() - col;
 	while (1) {
 		system("cls");
@@ -158,14 +165,16 @@ void listDisplay(vector<vector<string> >table, int col, string info = "", string
 		if ((c == 'l' || c == 'L') && y < ym)y++;
 	}
 }
-void showStudentList(vector<Student>t, string title = "") {
+void showStudentList(vector<Student>t, string title = "") {//学生信息(查询)列表
 	set<string>subject;
-	for (int i = 0; i < t.size(); i++) {
-		map<string, double>m = t[i].getScore();
+	for (int ii = 0; ii < t.size(); ii++) {
+		map<string, double>m = t[ii].getScore();
 		for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 			subject.insert(j->first);
 	}
-	vector<string>subjects(subject.begin(), subject.end());
+	vector<string>subjects;
+	for (set<string>::iterator it = subject.begin(); it != subject.end(); it++)
+		subjects.push_back(*it);
 	string spaces = "";
 	while (subjects.size() < 2) {
 		spaces += " ";
@@ -178,8 +187,7 @@ void showStudentList(vector<Student>t, string title = "") {
 		for (vector<string>::iterator j = subjects.begin(); j != subjects.end(); j++) {
 			row.push_back(*j);
 			if (t[i].getScore().count(*j)) {
-				string s = to_string(t[i].getScore()[*j]);
-				s.resize(6);
+				string s = toString(t[i].getScore()[*j]);
 				row.push_back(s);
 			}
 			else
@@ -190,11 +198,11 @@ void showStudentList(vector<Student>t, string title = "") {
 	while (table.size() < 9)table.push_back(vector<string>(2 + subjects.size() * 2, " "));
 	listDisplay(table, 6, t.size() ? "" : "提示: 未找到学生", title);
 }
-void showSubjectList(Class c, int mode, string title = "") {//mode 1:及格率 0:平均分
+void showSubjectList(Class c, int mode, string title = "") {//学生信息(查询)列表 mode 1:及格率 0:平均分
 	set<string>subject;
 	vector<Student>t(c.all());
-	for (int i = 0; i < t.size(); i++) {
-		map<string, double>m = t[i].getScore();
+	for (int ii = 0; ii < t.size(); ii++) {
+		map<string, double>m = t[ii].getScore();
 		for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 			subject.insert(j->first);
 	}
@@ -202,9 +210,8 @@ void showSubjectList(Class c, int mode, string title = "") {//mode 1:及格率 0:平
 	for (set<string>::iterator i = subject.begin(); i != subject.end(); i++) {
 		vector<string>row;
 		row.push_back(*i);
-		string s = to_string(mode ? c.passRate(*i) * 100 : c.scoreAvr(*i));
-		s.resize(6);
-		if (mode)s += '%';
+		string s = toString(mode ? c.passRate(*i) * 100 : c.scoreAvr(*i));
+		if (mode)s += "%";
 		row.push_back(s);
 		table.push_back(row);
 	}
@@ -229,7 +236,6 @@ int main() {
 	printf("\t+------------------------------------------------------------+\n");
 	Class s112;
 	s112.getFileData();
-	char c;
 	while (1) {
 		system("cls");
 		printf("\t+-------------------问问问学生学籍管理系统-------------------+\n");
@@ -246,7 +252,7 @@ int main() {
 		printf("\t|                                                            |\n");
 		printf("\t|                                             (ESC)退出系统  |\n");
 		printf("\t+------------------------------------------------------------+\n");
-		c = getch();
+		char c = getch();
 		if (c == 'i' || c == 'I') {
 			cout << "请输入学生学号及姓名:";
 			string s1, s2; cin >> s1 >> s2; cin.ignore(1000, '\n');
@@ -299,7 +305,7 @@ int main() {
 			Student t = s112.findStudent(s).size() ? s112.findStudent(s)[0] : Student("不存在的", "不存在的", map<string, double>());
 			string id = t.getId(), name = t.getName();
 			double gpa = t.gpa();
-			int rank = s112.getRank(t);
+			int rank = t.getScore().size() ? s112.getRank(t) : 0;
 			system("cls");
 			printf("\t+-------------------问问问学生学籍管理系统-------------------+\n");
 			printf("\t|                                                            |\n");
