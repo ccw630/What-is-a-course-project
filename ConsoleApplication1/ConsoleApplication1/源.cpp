@@ -45,7 +45,7 @@ public:
 		if (t.size() == 0) st.push_back(s);
 		else if (st[t[0]].getName() == s.getName()) {
 			map<string, double>m(st[t[0]].getScore()), sm(s.getScore());
-			if (m.size()>0 && sm.size()>0)//·ÀÖ¹mapÎª¿Õ
+			if (sm.size()>0)//·ÀÖ¹mapÎª¿Õ
 				for (map<string, double>::iterator i = sm.begin(); i != sm.end(); i++) {
 					m[i->first] = i->second;
 				}
