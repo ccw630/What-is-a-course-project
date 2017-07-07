@@ -2,7 +2,7 @@
 #include<iostream>
 #include<string>
 #include<algorithm>
-#include<map>
+#include<unordered_map>
 #include<vector>
 #include<set>
 #include<iomanip>
@@ -12,13 +12,13 @@ using namespace std;
 class Student {
 private:
 	string id, name;
-	map<string, double>score;
+	unordered_map<string, double>score;
 public:
 	Student() {};
-	Student(string a, string b, map<string, double>c) :id(a), name(b), score(c) {}
+	Student(string a, string b, unordered_map<string, double>c) :id(a), name(b), score(c) {}
 	string getId() { return id; }
 	string getName() { return name; }
-	map<string, double>getScore() { return score; }
+	unordered_map<string, double>getScore() { return score; }
 	double getScore(string s) { return score.count(s) ? score[s] : 0; }
 	int passSubject(string s) {	//passSubject -1:未选 0:挂 1:过
 		if (!score.count(s))return -1;
@@ -28,7 +28,7 @@ public:
 	double gpa() {//绩点计算
 		if (!score.size())return 0;
 		double r = 0;
-		for (map<string, double>::iterator i = score.begin(); i != score.end(); i++)
+		for (unordered_map<string, double>::iterator i = score.begin(); i != score.end(); i++)
 			if (passSubject(i->first)>0)r += (i->second - 50) / 10;
 		return r / score.size();
 	}
@@ -44,9 +44,9 @@ public:
 		vector<int>t = findStudentKey(s.getId());
 		if (t.size() == 0) st.push_back(s);
 		else if (st[t[0]].getName() == s.getName()) {
-			map<string, double>m(st[t[0]].getScore()), sm(s.getScore());
-			if (sm.size()>0)//防止map为空
-				for (map<string, double>::iterator i = sm.begin(); i != sm.end(); i++) {
+			unordered_map<string, double>m(st[t[0]].getScore()), sm(s.getScore());
+			if (sm.size()>0)//防止unordered_map为空
+				for (unordered_map<string, double>::iterator i = sm.begin(); i != sm.end(); i++) {
 					m[i->first] = i->second;
 				}
 			st[t[0]] = Student(s.getId(), s.getName(), m);
@@ -65,7 +65,7 @@ public:
 			return;
 		}
 		string s1, s2;
-		map<string, double>m;
+		unordered_map<string, double>m;
 		while (f >> s1 >> s2) {
 			m.clear();
 			string s; double d;
@@ -81,8 +81,8 @@ public:
 		ofstream f("data.txt", ios::app);
 		for (int i = fileEnd; i < st.size(); i++) {
 			f << st[i].getId() << ' ' << st[i].getName() << ' ';
-			map<string, double>m = st[i].getScore();
-			for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
+			unordered_map<string, double>m = st[i].getScore();
+			for (unordered_map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 				f << j->first << ' ' << j->second << ' ';
 			f << "end -1" << endl;//以end -1作为一行结束的标志
 		}
@@ -169,8 +169,8 @@ void listDisplay(vector<vector<string> >table, int col, string info = "", string
 void showStudentList(vector<Student>t, string title = "") {//学生信息(查询)列表
 	set<string>subject;
 	for (int ii = 0; ii < t.size(); ii++) {
-		map<string, double>m = t[ii].getScore();
-		for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
+		unordered_map<string, double>m = t[ii].getScore();
+		for (unordered_map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 			subject.insert(j->first);
 	}
 	vector<string>subjects;
@@ -203,8 +203,8 @@ void showSubjectList(Class c, int mode, string title = "") {//学生信息(查询)列表
 	set<string>subject;
 	vector<Student>t(c.all());
 	for (int ii = 0; ii < t.size(); ii++) {
-		map<string, double>m = t[ii].getScore();
-		for (map<string, double>::iterator j = m.begin(); j != m.end(); j++)
+		unordered_map<string, double>m = t[ii].getScore();
+		for (unordered_map<string, double>::iterator j = m.begin(); j != m.end(); j++)
 			subject.insert(j->first);
 	}
 	vector<vector<string> >table;
@@ -257,7 +257,7 @@ int main() {
 		if (c == 'i' || c == 'I') {
 			cout << "请输入学生学号及姓名:";
 			string s1, s2; cin >> s1 >> s2; cin.ignore(1000, '\n');
-			map<string, double>m;
+			unordered_map<string, double>m;
 			int n;
 			cout << "请输入将要登记的科目数量: ";
 			cin >> n;
@@ -305,7 +305,7 @@ int main() {
 		if (c == 'r' || c == 'R') {
 			cout << "请输入学生学号:";
 			string s; cin >> s; cin.ignore(1000, '\n');
-			Student t = s112.findStudent(s).size() ? s112.findStudent(s)[0] : Student("不存在的", "不存在的", map<string, double>());
+			Student t = s112.findStudent(s).size() ? s112.findStudent(s)[0] : Student("不存在的", "不存在的", unordered_map<string, double>());
 			string id = t.getId(), name = t.getName();
 			double gpa = t.gpa();
 			int rank = t.getScore().size() ? s112.getRank(t) : 0;
