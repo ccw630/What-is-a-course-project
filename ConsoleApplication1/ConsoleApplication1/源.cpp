@@ -19,7 +19,7 @@ public:
 	string getId() { return id; }
 	string getName() { return name; }
 	map<string, double>getScore() { return score; }
-	double getScore(string s) { return score[s]; }
+	double getScore(string s) { return score.count(s)?score[s]:0; }
 	int passSubject(string s) {	//passSubject -1:ฮดัก 0:นา 1:นý
 		if (!score.count(s))return -1;
 		if (score[s] >= 60)return 1;
