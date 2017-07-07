@@ -40,7 +40,7 @@ private:
 	int fileEnd = 0;
 public:
 	vector<Student>all() { return st; }
-	void insertStudent(Student s) {
+	void insertStudent(Student& s) {
 		vector<int>t = findStudentKey(s.getId());
 		if (t.size() == 0) st.push_back(s);
 		else if (st[t[0]].getName() == s.getName()) {
@@ -123,7 +123,7 @@ public:
 		return (double)n / a;
 	}
 
-	int getRank(Student t) {//排名计算
+	int getRank(Student& t) {//排名计算
 		int n = 1;
 		for (int i = 0; i<st.size(); i++)
 			if (st[i].gpa()>t.gpa())n++;
@@ -139,7 +139,7 @@ string toString(double n) {//实数转为字符串 保留3位小数
 	s << fixed << setprecision(3) << n;
 	return s.str();
 }
-void listDisplay(vector<vector<string> >table, int col, string info = "", string title = "") {//实现列表翻查功能 table:原始表格 col:列,可选2 3 6 info:窗口底部提示信息 title:右上角标题
+void listDisplay(vector<vector<string> >&table, int col, string info = "", string title = "") {//实现列表翻查功能 table:原始表格 col:列,可选2 3 6 info:窗口底部提示信息 title:右上角标题
 	int x = 0, y = 0, xm = table.size() - 9, ym = table[0].size() - col;
 	while (1) {
 		system("cls");
@@ -166,7 +166,7 @@ void listDisplay(vector<vector<string> >table, int col, string info = "", string
 		if ((c == 'l' || c == 'L') && y < ym)y++;
 	}
 }
-void showStudentList(vector<Student>t, string title = "") {//学生信息(查询)列表
+void showStudentList(vector<Student>&t, string title = "") {//学生信息(查询)列表
 	set<string>subject;
 	for (int ii = 0; ii < t.size(); ii++) {
 		unordered_map<string, double>m = t[ii].getScore();
@@ -199,7 +199,7 @@ void showStudentList(vector<Student>t, string title = "") {//学生信息(查询)列表
 	while (table.size() < 9)table.push_back(vector<string>(2 + subjects.size() * 2, " "));
 	listDisplay(table, 6, t.size() ? "" : "提示: 未找到学生", title);
 }
-void showSubjectList(Class c, int mode, string title = "") {//学生信息(查询)列表 mode 1:及格率 0:平均分
+void showSubjectList(Class& c, int mode, string title = "") {//学生信息(查询)列表 mode 1:及格率 0:平均分
 	set<string>subject;
 	vector<Student>t(c.all());
 	for (int ii = 0; ii < t.size(); ii++) {
